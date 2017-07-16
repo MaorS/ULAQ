@@ -1,0 +1,6 @@
+framework module BlueSTSDK {
+  umbrella header "BlueSTSDK.h"
+
+  export *
+  module * { export * }
+}

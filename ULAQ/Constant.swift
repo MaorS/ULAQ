@@ -35,3 +35,6 @@ var BUY_MESSAGE = ""
 
 // Play Mode (1= Level mode, 2=Top Score Mode)
 var PLAY_MODE = 1
+
+// BleManager
+let accelerometer = "Accelerometer"

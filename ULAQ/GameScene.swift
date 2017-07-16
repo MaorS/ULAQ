@@ -11,7 +11,7 @@ import GameplayKit
 import CoreMotion
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
-
+    
     var currentScore: Int = 0
     
     var timerObstacle = Timer()
@@ -28,7 +28,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var label2 = SKLabelNode()
     
+    var accelerometer : Axis = Axis(x : 0, y : 0 , z : 0)
+   
     override func didMove(to view: SKView) {
+        BleManager.shared.delegate = self
         self.scaleMode = .fill
         
         self.setupLevel()
@@ -51,29 +54,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             motionManager.startAccelerometerUpdates(to: queue, withHandler:{
                 data, error in
                 
-                var accel: CMAcceleration
+                var accel: Axis
                 
-                accel = (data?.acceleration)!
+                accel = self.accelerometer
                 let currentX = self.snake.snakeHead.position.x
                 let currentY = self.snake.snakeHead.position.y
-                
+                print(accel)
                 if(accel.x < 0){
-                    self.destX = currentX + CGFloat(accel.x * 200)
+                    self.destX = (currentX + CGFloat(accel.x + 1) / 5)
                 }else if(accel.x > 0){
-                    self.destX = currentX + CGFloat(accel.x * 200)
+                    self.destX = (currentX + CGFloat(accel.x + 1) / 5)
                 }
                 
                 if(accel.y < 0){
-                    self.destY = currentY + CGFloat(accel.y * 200)
+                    self.destY = (currentY + CGFloat(accel.y + 1) / 5)
                 }else if(accel.y > 0){
-                    self.destY = currentY + CGFloat(accel.y * 200)
+                    self.destY = (currentY + CGFloat(accel.y + 1) / 5)
                 }
+                
             })
         }
         
     }
     
     func setupLevel(){
+        BleManager.shared.delegate = self
+
         level = LevelManager().new()
         
         if (PLAY_MODE==2) {
@@ -216,5 +222,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             index+=1
         }
+    }
+}
+
+extension GameScene : BleManagerDelegate{
+    func didAccelerometerChanged(axis: Axis){
+       self.accelerometer = axis
+    }
+
+    func nodeDidConnect(){
+        
+    }
+    func nodeDidConnectionGone(){
+        
     }
 }
